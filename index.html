@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Task Manager</title>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"
+        integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        input[type="text"] {
+            font-size: 16px;
+            padding: 8px;
+            margin: 8px;
+        }
+
+        button {
+            font-size: 16px;
+            padding: 8px;
+            margin: 8px;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        td {
+            width: 100%;
+            border-bottom: 1px solid black;
+            padding: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="p-3 text-bg-dark text-center">
+        <h1>Task Manager</h1>
+    </header>
+    <main class="container">
+        <div class="input d-flex">
+            <input type="text" class="form-control text-bg-light" id="task-input" placeholder="Enter a task">
+            <button id="submit-button" class="btn btn-outline-success w-lg-3">Submit</button>
+        </div>
+        <div class="showList">
+            <table id="task-table">
+                <!-- The table for displaying the tasks will be added here using JavaScript -->
+            </table>
+            <button id="remove-all-button" class="btn btn-danger">Remove all tasks</button>
+        </div>
+    </main>
+    <script>
+        // JavaScript code for adding functionality to the web page goes here
+        const taskInput = document.getElementById("task-input");
+        const submitButton = document.getElementById("submit-button");
+        const taskTable = document.getElementById("task-table");
+        const removeAllButton = document.getElementById("remove-all-button");
+
+        // Retrieve the tasks from the local storage and add them to the table on the page
+        for (let i = 0; i < localStorage.length; i++) {
+            const taskData = localStorage.getItem(localStorage.key(i));
+
+            // Add the task data to the table on the web page
+            const tableRow = document.createElement("tr");
+            const taskCell = document.createElement("td");
+            taskCell.innerText = taskData;
+            tableRow.appendChild(taskCell);
+
+            // Add the remove icon to the table row
+            const removeIcon = document.createElement("i");
+            // removeIcon.src = "https://icons.iconarchive.com/icons/icons8/windows-8/16/Editing-Delete-icon.png";
+            removeIcon.className = 'fa fa-trash-can text-danger';
+            // removeIcon.setAttribute('aria-hidden', 'true');
+            removeIcon.addEventListener("click", () => {
+                // Remove the task from the local storage and the table on the web page
+                localStorage.removeItem(taskData);
+                tableRow.remove();
+            });
+            const removeCell = document.createElement("td");
+            removeCell.appendChild(removeIcon);
+            tableRow.appendChild(removeCell);
+
+            taskTable.appendChild(tableRow);
+        }
+
+        submitButton.addEventListener("click", () => {
+            // Empty Input ERR 
+            try {
+                if (taskInput.value.trim() == '') {
+                    alert("You Sould ENTER Some Task Before SUBMIT!!!");
+                } else {
+                    // Get the task data from the text input field and make it ready for new input
+                    const taskData = taskInput.value;
+                    taskInput.value = '';
+                    taskInput.focus();
+                    // Save the task data to the local storage
+                    localStorage.setItem(taskData, taskData);
+
+                    // Add the task data to the table on the web page
+                    const tableRow = document.createElement("tr");
+                    const taskCell = document.createElement("td");
+                    taskCell.innerText = taskData;
+                    tableRow.appendChild(taskCell);
+
+                    // Add the remove icon to the table row
+                    const removeIcon = document.createElement("i");
+                    removeIcon.className = 'fa fa-trash-can text-danger';
+                    removeIcon.addEventListener("click", () => {
+                        // Remove the task from the local storage and the table on the web page
+                        localStorage.removeItem(taskData);
+                        tableRow.remove();
+                    });
+                    const removeCell = document.createElement("td");
+                    removeCell.appendChild(removeIcon);
+                    tableRow.appendChild(removeCell);
+
+                    taskTable.appendChild(tableRow);
+                }
+            } catch(err){
+                alert(err.name);
+            }
+            
+        });
+
+        removeAllButton.addEventListener("click", () => {
+            // Clear the local storage and remove all tasks from the table on the web page
+            localStorage.clear();
+            while (taskTable.firstChild) {
+                taskTable.removeChild(taskTable.firstChild);
+            }
+        });
+    </script>
+</body>
+
+</html>
